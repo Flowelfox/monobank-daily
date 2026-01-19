@@ -1,0 +1,23 @@
+import logging
+
+from telegram import Update
+from telegram.ext import ContextTypes
+
+from src.lib.helpers import prepare_user
+from src.lib.messages import delete_interface
+
+logger = logging.getLogger(__name__)
+
+
+async def goto_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.debug(f"goto_start called, callback_data={update.callback_query.data if update.callback_query else 'N/A'}")
+    await prepare_user(update, context)
+    await delete_interface(context)
+
+    if update.callback_query:
+        await update.callback_query.answer()
+
+    from src.menus.start import StartMenu
+
+    start_menu = StartMenu(application=context.application)
+    return await start_menu.entry(update, context)

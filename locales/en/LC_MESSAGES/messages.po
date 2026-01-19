@@ -1,0 +1,191 @@
+# English translations for Monobank Daily Bot
+# Copyright (C) 2026
+# This file is distributed under the same license as the monobankdaily package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: monobankdaily 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-19 12:00+0200\n"
+"PO-Revision-Date: 2026-01-19 12:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Start menu
+msgid "✅ Bot configured"
+msgstr "✅ Bot configured"
+
+msgid "⚠️ Select accounts in settings"
+msgstr "⚠️ Select accounts in settings"
+
+msgid "⚠️ Add Monobank token in settings"
+msgstr "⚠️ Add Monobank token in settings"
+
+msgid "📊 Monobank Daily Report Bot\n\n{status}\n\nDaily report at {report_time} Kyiv time."
+msgstr "📊 Monobank Daily Report Bot\n\n{status}\n\nDaily report at {report_time} Kyiv time."
+
+msgid "📈 Get Report Now"
+msgstr "📈 Get Report Now"
+
+msgid "⚙️ Settings"
+msgstr "⚙️ Settings"
+
+msgid "❓ Help"
+msgstr "❓ Help"
+
+msgid "Please add Monobank token first"
+msgstr "Please add Monobank token first"
+
+msgid "Please select accounts first"
+msgstr "Please select accounts first"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+# Report
+msgid "📊 Spending for {date}\n\n"
+msgstr "📊 Spending for {date}\n\n"
+
+msgid "💰 Total: -{amount} ₴\n\n"
+msgstr "💰 Total: -{amount} ₴\n\n"
+
+msgid "📁 By category:\n"
+msgstr "📁 By category:\n"
+
+msgid "No spending today! 🎉"
+msgstr "No spending today! 🎉"
+
+msgid "\n\n📥 Income: +{amount} ₴"
+msgstr "\n\n📥 Income: +{amount} ₴"
+
+msgid "❌ Error: {error}"
+msgstr "❌ Error: {error}"
+
+msgid "◀️ Back"
+msgstr "◀️ Back"
+
+# Help
+msgid "❓ <b>How to use this bot:</b>\n\n1. Get your Monobank token:\n   • Open Monobank app\n   • Go to Settings → API\n   • Create a token\n\n2. Add token in Settings\n\n3. Select accounts to track\n\n4. Set your preferred report time in Settings\n\nYou can also get report manually anytime!"
+msgstr "❓ <b>How to use this bot:</b>\n\n1. Get your Monobank token:\n   • Open Monobank app\n   • Go to Settings → API\n   • Create a token\n\n2. Add token in Settings\n\n3. Select accounts to track\n\n4. Set your preferred report time in Settings\n\nYou can also get report manually anytime!"
+
+# Settings
+msgid "✅ Token set"
+msgstr "✅ Token set"
+
+msgid "❌ Token not set"
+msgstr "❌ Token not set"
+
+msgid "✅ {count} account(s) selected"
+msgstr "✅ {count} account(s) selected"
+
+msgid "❌ No accounts selected"
+msgstr "❌ No accounts selected"
+
+msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
+msgstr "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
+
+msgid "🔄 Change token"
+msgstr "🔄 Change token"
+
+msgid "💳 Select accounts"
+msgstr "💳 Select accounts"
+
+msgid "🗑 Remove token"
+msgstr "🗑 Remove token"
+
+msgid "➕ Add token"
+msgstr "➕ Add token"
+
+msgid "🔑 <b>Enter Monobank Token</b>\n\nGet your token:\n1. Open Monobank app\n2. Go to Settings → API\n3. Create a token\n4. Send the token here\n\nToken format: uXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+msgstr "🔑 <b>Enter Monobank Token</b>\n\nGet your token:\n1. Open Monobank app\n2. Go to Settings → API\n3. Create a token\n4. Send the token here\n\nToken format: uXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+msgid "❌ Cancel"
+msgstr "❌ Cancel"
+
+msgid "❌ Invalid token format. Please try again.\n\nToken should start with 'u' and be at least 40 characters."
+msgstr "❌ Invalid token format. Please try again.\n\nToken should start with 'u' and be at least 40 characters."
+
+msgid "❌ Invalid token. Please check and try again."
+msgstr "❌ Invalid token. Please check and try again."
+
+msgid "❌ Error validating token: {error}"
+msgstr "❌ Error validating token: {error}"
+
+msgid "✅ Token saved successfully!\n\nNow select accounts to track."
+msgstr "✅ Token saved successfully!\n\nNow select accounts to track."
+
+msgid "◀️ Back to settings"
+msgstr "◀️ Back to settings"
+
+msgid "Token removed"
+msgstr "Token removed"
+
+msgid "Please add token first"
+msgstr "Please add token first"
+
+msgid "Loading accounts..."
+msgstr "Loading accounts..."
+
+msgid "❌ Error loading accounts: {error}"
+msgstr "❌ Error loading accounts: {error}"
+
+msgid "💳 <b>Select accounts</b>\n\nTap to toggle selection:"
+msgstr "💳 <b>Select accounts</b>\n\nTap to toggle selection:"
+
+msgid "💾 Save"
+msgstr "💾 Save"
+
+msgid "◀️ Cancel"
+msgstr "◀️ Cancel"
+
+msgid "{count} account(s) saved"
+msgstr "{count} account(s) saved"
+
+msgid "No accounts selected"
+msgstr "No accounts selected"
+
+# Time selection
+msgid "🕐 Change report time"
+msgstr "🕐 Change report time"
+
+msgid "🕐 <b>Select report hour</b>\n\nChoose hour for daily report (Kyiv time):"
+msgstr "🕐 <b>Select report hour</b>\n\nChoose hour for daily report (Kyiv time):"
+
+msgid "🕐 <b>Select report minute</b>\n\nSelected hour: {hour}:XX\n\nChoose minute:"
+msgstr "🕐 <b>Select report minute</b>\n\nSelected hour: {hour}:XX\n\nChoose minute:"
+
+msgid "◀️ Back to hour"
+msgstr "◀️ Back to hour"
+
+msgid "Report time set to {time}"
+msgstr "Report time set to {time}"
+
+# Language selection
+msgid "🌐 Change language"
+msgstr "🌐 Change language"
+
+msgid "🌐 <b>Select language</b>\n\nChoose your preferred language:"
+msgstr "🌐 <b>Select language</b>\n\nChoose your preferred language:"
+
+msgid "Language set to {language}"
+msgstr "Language set to {language}"
+
+# Daily report
+msgid "📊 Daily Report for {date}\n\n"
+msgstr "📊 Daily Report for {date}\n\n"
+
+msgid "💰 Total spent: -{amount} ₴\n\n"
+msgstr "💰 Total spent: -{amount} ₴\n\n"
+
+msgid "No spending today! 🎉\n"
+msgstr "No spending today! 🎉\n"
+
+msgid "\n📥 Income: +{amount} ₴"
+msgstr "\n📥 Income: +{amount} ₴"
+
+msgid "\n\n📱 Transactions: {count}"
+msgstr "\n\n📱 Transactions: {count}"

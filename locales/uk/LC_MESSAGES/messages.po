@@ -1,0 +1,191 @@
+# Ukrainian translations for Monobank Daily Bot
+# Copyright (C) 2026
+# This file is distributed under the same license as the monobankdaily package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: monobankdaily 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-19 12:00+0200\n"
+"PO-Revision-Date: 2026-01-19 12:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Start menu
+msgid "✅ Bot configured"
+msgstr "✅ Бот налаштовано"
+
+msgid "⚠️ Select accounts in settings"
+msgstr "⚠️ Оберіть рахунки в налаштуваннях"
+
+msgid "⚠️ Add Monobank token in settings"
+msgstr "⚠️ Додайте токен Monobank в налаштуваннях"
+
+msgid "📊 Monobank Daily Report Bot\n\n{status}\n\nDaily report at {report_time} Kyiv time."
+msgstr "📊 Monobank Щоденний Звіт\n\n{status}\n\nЩоденний звіт о {report_time} за Києвом."
+
+msgid "📈 Get Report Now"
+msgstr "📈 Отримати звіт зараз"
+
+msgid "⚙️ Settings"
+msgstr "⚙️ Налаштування"
+
+msgid "❓ Help"
+msgstr "❓ Допомога"
+
+msgid "Please add Monobank token first"
+msgstr "Спочатку додайте токен Monobank"
+
+msgid "Please select accounts first"
+msgstr "Спочатку оберіть рахунки"
+
+msgid "Loading..."
+msgstr "Завантаження..."
+
+# Report
+msgid "📊 Spending for {date}\n\n"
+msgstr "📊 Витрати за {date}\n\n"
+
+msgid "💰 Total: -{amount} ₴\n\n"
+msgstr "💰 Всього: -{amount} ₴\n\n"
+
+msgid "📁 By category:\n"
+msgstr "📁 По категоріях:\n"
+
+msgid "No spending today! 🎉"
+msgstr "Сьогодні без витрат! 🎉"
+
+msgid "\n\n📥 Income: +{amount} ₴"
+msgstr "\n\n📥 Надходження: +{amount} ₴"
+
+msgid "❌ Error: {error}"
+msgstr "❌ Помилка: {error}"
+
+msgid "◀️ Back"
+msgstr "◀️ Назад"
+
+# Help
+msgid "❓ <b>How to use this bot:</b>\n\n1. Get your Monobank token:\n   • Open Monobank app\n   • Go to Settings → API\n   • Create a token\n\n2. Add token in Settings\n\n3. Select accounts to track\n\n4. Set your preferred report time in Settings\n\nYou can also get report manually anytime!"
+msgstr "❓ <b>Як користуватися ботом:</b>\n\n1. Отримайте токен Monobank:\n   • Відкрийте застосунок Monobank\n   • Перейдіть в Налаштування → API\n   • Створіть токен\n\n2. Додайте токен в Налаштуваннях\n\n3. Оберіть рахунки для відстеження\n\n4. Встановіть бажаний час звіту в Налаштуваннях\n\nВи також можете отримати звіт вручну в будь-який час!"
+
+# Settings
+msgid "✅ Token set"
+msgstr "✅ Токен встановлено"
+
+msgid "❌ Token not set"
+msgstr "❌ Токен не встановлено"
+
+msgid "✅ {count} account(s) selected"
+msgstr "✅ Обрано {count} рахунок(ів)"
+
+msgid "❌ No accounts selected"
+msgstr "❌ Рахунки не обрано"
+
+msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
+msgstr "⚙️ <b>Налаштування</b>\n\n🔑 Токен: {token_status}\n💳 Рахунки: {accounts_status}\n🕐 Час звіту: {report_time}\n🌐 Мова: {language}"
+
+msgid "🔄 Change token"
+msgstr "🔄 Змінити токен"
+
+msgid "💳 Select accounts"
+msgstr "💳 Обрати рахунки"
+
+msgid "🗑 Remove token"
+msgstr "🗑 Видалити токен"
+
+msgid "➕ Add token"
+msgstr "➕ Додати токен"
+
+msgid "🔑 <b>Enter Monobank Token</b>\n\nGet your token:\n1. Open Monobank app\n2. Go to Settings → API\n3. Create a token\n4. Send the token here\n\nToken format: uXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+msgstr "🔑 <b>Введіть токен Monobank</b>\n\nОтримайте токен:\n1. Відкрийте застосунок Monobank\n2. Перейдіть в Налаштування → API\n3. Створіть токен\n4. Надішліть токен сюди\n\nФормат токена: uXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+msgid "❌ Cancel"
+msgstr "❌ Скасувати"
+
+msgid "❌ Invalid token format. Please try again.\n\nToken should start with 'u' and be at least 40 characters."
+msgstr "❌ Невірний формат токена. Спробуйте ще раз.\n\nТокен має починатися з 'u' і містити щонайменше 40 символів."
+
+msgid "❌ Invalid token. Please check and try again."
+msgstr "❌ Невірний токен. Перевірте та спробуйте ще раз."
+
+msgid "❌ Error validating token: {error}"
+msgstr "❌ Помилка перевірки токена: {error}"
+
+msgid "✅ Token saved successfully!\n\nNow select accounts to track."
+msgstr "✅ Токен успішно збережено!\n\nТепер оберіть рахунки для відстеження."
+
+msgid "◀️ Back to settings"
+msgstr "◀️ Назад до налаштувань"
+
+msgid "Token removed"
+msgstr "Токен видалено"
+
+msgid "Please add token first"
+msgstr "Спочатку додайте токен"
+
+msgid "Loading accounts..."
+msgstr "Завантаження рахунків..."
+
+msgid "❌ Error loading accounts: {error}"
+msgstr "❌ Помилка завантаження рахунків: {error}"
+
+msgid "💳 <b>Select accounts</b>\n\nTap to toggle selection:"
+msgstr "💳 <b>Оберіть рахунки</b>\n\nНатисніть для вибору:"
+
+msgid "💾 Save"
+msgstr "💾 Зберегти"
+
+msgid "◀️ Cancel"
+msgstr "◀️ Скасувати"
+
+msgid "{count} account(s) saved"
+msgstr "Збережено {count} рахунок(ів)"
+
+msgid "No accounts selected"
+msgstr "Рахунки не обрано"
+
+# Time selection
+msgid "🕐 Change report time"
+msgstr "🕐 Змінити час звіту"
+
+msgid "🕐 <b>Select report hour</b>\n\nChoose hour for daily report (Kyiv time):"
+msgstr "🕐 <b>Оберіть годину звіту</b>\n\nОберіть годину для щоденного звіту (за Києвом):"
+
+msgid "🕐 <b>Select report minute</b>\n\nSelected hour: {hour}:XX\n\nChoose minute:"
+msgstr "🕐 <b>Оберіть хвилини звіту</b>\n\nОбрана година: {hour}:XX\n\nОберіть хвилини:"
+
+msgid "◀️ Back to hour"
+msgstr "◀️ Назад до години"
+
+msgid "Report time set to {time}"
+msgstr "Час звіту встановлено на {time}"
+
+# Language selection
+msgid "🌐 Change language"
+msgstr "🌐 Змінити мову"
+
+msgid "🌐 <b>Select language</b>\n\nChoose your preferred language:"
+msgstr "🌐 <b>Оберіть мову</b>\n\nОберіть бажану мову:"
+
+msgid "Language set to {language}"
+msgstr "Мова встановлена: {language}"
+
+# Daily report
+msgid "📊 Daily Report for {date}\n\n"
+msgstr "📊 Щоденний звіт за {date}\n\n"
+
+msgid "💰 Total spent: -{amount} ₴\n\n"
+msgstr "💰 Всього витрачено: -{amount} ₴\n\n"
+
+msgid "No spending today! 🎉\n"
+msgstr "Сьогодні без витрат! 🎉\n"
+
+msgid "\n📥 Income: +{amount} ₴"
+msgstr "\n📥 Надходження: +{amount} ₴"
+
+msgid "\n\n📱 Transactions: {count}"
+msgstr "\n\n📱 Транзакцій: {count}"
