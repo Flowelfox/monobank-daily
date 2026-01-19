@@ -397,8 +397,12 @@ class SettingsMenu(BaseMenu):
                 db_user = context.session.scalar(stmt)
                 db_user.language_code = language_code
                 context.session.add(db_user)
-                context.session.flush()
+
+            # Re-fetch outside transaction to get fresh object
+            with context.session.begin():
+                stmt = select(User).where(User.id == user.id)
                 user = context.session.scalar(stmt)
+                context.session.expunge(user)
                 context.user_data["user"] = user
 
         _ = user.translator
