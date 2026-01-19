@@ -72,18 +72,20 @@ MCC_CATEGORIES = {
 
 def get_category_for_mcc(mcc: int) -> str:
     for category_key, category_data in MCC_CATEGORIES.items():
-        if mcc in category_data["codes"]:
+        codes = category_data["codes"]
+        if isinstance(codes, list) and mcc in codes:
             return category_key
     return "other"
 
 
 def get_category_name(category_key: str, language: str = "uk") -> str:
     category = MCC_CATEGORIES.get(category_key, MCC_CATEGORIES["other"])
-    return category.get(f"name_{language}", category["name_en"])
+    name = category.get(f"name_{language}", category.get("name_en", "Other"))
+    return str(name)
 
 
 class MonobankAPIError(Exception):
-    def __init__(self, message: str, status_code: int = None, retry_after: int = None):
+    def __init__(self, message: str, status_code: int | None = None, retry_after: int | None = None):
         self.message = message
         self.status_code = status_code
         self.retry_after = retry_after
@@ -92,7 +94,9 @@ class MonobankAPIError(Exception):
 
 class MonobankRateLimitError(MonobankAPIError):
     def __init__(self, retry_after: int = 60):
-        super().__init__(f"Rate limit exceeded. Retry after {retry_after} seconds.", status_code=429, retry_after=retry_after)
+        super().__init__(
+            f"Rate limit exceeded. Retry after {retry_after} seconds.", status_code=429, retry_after=retry_after
+        )
 
 
 class MonobankService:
@@ -114,7 +118,9 @@ class MonobankService:
             else:
                 raise MonobankAPIError(f"API error: {response.text}", status_code=response.status_code)
 
-    async def get_statement(self, account: str, from_ts: int, to_ts: int | None = None, respect_rate_limit: bool = True) -> list[dict]:
+    async def get_statement(
+        self, account: str, from_ts: int, to_ts: int | None = None, respect_rate_limit: bool = True
+    ) -> list[dict]:
         if respect_rate_limit:
             await self._wait_for_rate_limit()
 
@@ -167,8 +173,9 @@ async def get_daily_spending(token: str, accounts: list[str], from_ts: int, to_t
             transactions = await service.get_statement(account_id, from_ts, to_ts, respect_rate_limit=True)
             all_transactions.extend(transactions)
         except MonobankRateLimitError as e:
-            logger.warning(f"Rate limit hit for account {account_id}, waiting {e.retry_after}s and retrying...")
-            await asyncio.sleep(e.retry_after)
+            retry_after = e.retry_after if e.retry_after is not None else 60
+            logger.warning(f"Rate limit hit for account {account_id}, waiting {retry_after}s and retrying...")
+            await asyncio.sleep(retry_after)
             try:
                 transactions = await service.get_statement(account_id, from_ts, to_ts, respect_rate_limit=False)
                 all_transactions.extend(transactions)

@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+from typing import Self
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import DeclarativeBase, object_session
@@ -7,8 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
-    def save(self):
+    def save(self) -> Self | None:
         session = object_session(self)
+        if session is None:
+            logger.critical(f"No session found for {self} object")
+            return None
 
         with session.begin():
             try:
@@ -19,8 +25,11 @@ class Base(DeclarativeBase):
                 logger.critical(f"Database error while saving {self} object: {e!s}")
                 return None
 
-    def delete(self):
+    def delete(self) -> Self | None:
         session = object_session(self)
+        if session is None:
+            logger.critical(f"No session found for {self} object")
+            return None
 
         with session.begin():
             try:

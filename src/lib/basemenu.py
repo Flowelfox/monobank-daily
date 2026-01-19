@@ -51,8 +51,10 @@ class BaseMenu(ABC):
         self.update_queue = self.application.update_queue
         self.job_queue = self.application.job_queue
 
-    def conv_fallback(self, context: ContextTypes.DEFAULT_TYPE):
+    def conv_fallback(self, context: ContextTypes.DEFAULT_TYPE) -> int:
         user_data = context.user_data
+        if user_data is None:
+            return ConversationHandler.END
         if "keyboard" in user_data and user_data["keyboard"]:
             self.bot.send_message(
                 chat_id=user_data["user"].id,
@@ -74,10 +76,11 @@ class BaseMenu(ABC):
     def fallbacks(self) -> list[BaseHandler]:
         return []
 
-    def get_handler(self):
+    def get_handler(self) -> ConversationHandler:
+        states: dict[object, list[BaseHandler]] = dict(self.states().items())
         return ConversationHandler(
             entry_points=self.entry_points(),
-            states=self.states(),
+            states=states,
             fallbacks=self.fallbacks(),
             allow_reentry=self.allow_reentry,
             name=self.menu_name,
@@ -129,6 +132,7 @@ class BaseMenu(ABC):
                 return update_state(attr)
         return attr
 
-    def get_current_state(self, context: ContextTypes.DEFAULT_TYPE):
-        if self.menu_name in context.user_data:
+    def get_current_state(self, context: ContextTypes.DEFAULT_TYPE) -> Enum | None:
+        if context.user_data and self.menu_name in context.user_data:
             return context.user_data[self.menu_name].get("_state", None)
+        return None

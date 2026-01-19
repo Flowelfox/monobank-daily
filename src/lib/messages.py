@@ -31,8 +31,8 @@ class MLStripper(HTMLParser):
         self.convert_charrefs = True
         self.text = StringIO()
 
-    def handle_data(self, d):
-        self.text.write(d)
+    def handle_data(self, data: str) -> None:
+        self.text.write(data)
 
     def get_data(self):
         return self.text.getvalue()
@@ -59,7 +59,7 @@ class Interface:
         return self._message
 
     @message.setter
-    def message(self, value: Message):
+    def message(self, value: Message | None) -> None:
         self._message = value
 
     def __getstate__(self):
@@ -156,7 +156,7 @@ class Interface:
         user_data["interfaces"][self.name] = self
 
 
-async def _send_telegram_message(bot: Bot, **kwargs) -> Message:
+async def _send_telegram_message(bot: Bot, **kwargs) -> Message | None:
     if "text" in kwargs:
         return await bot.send_message(**kwargs)
     elif "photo" in kwargs:
@@ -210,7 +210,7 @@ def get_user_data(application, chat_id: str) -> dict:
 async def send_or_edit(
     context: CallbackContext,
     interface_name: str | None = "interface",
-    user_id: str = None,
+    user_id: str | None = None,
     application=None,
     **kwargs,
 ) -> Interface | None:
@@ -287,8 +287,14 @@ async def send_or_edit(
             else:
                 new_text = kwargs.get("text", "").replace("<s>", "").replace("</s>", "").strip(" \n\t")
                 old_text_html = interface.text_html if hasattr(interface, "text_html") and interface.text_html else None
-                old_text_md = interface.text_markdown_v2 if hasattr(interface, "text_markdown_v2") and interface.text_markdown_v2 else None
-                logger.debug(f"text comparison: new='{new_text[:50]}...' old_html='{old_text_html[:50] if old_text_html else None}...'")
+                old_text_md = (
+                    interface.text_markdown_v2
+                    if hasattr(interface, "text_markdown_v2") and interface.text_markdown_v2
+                    else None
+                )
+                logger.debug(
+                    f"text comparison: new='{new_text[:50]}...' old_html='{old_text_html[:50] if old_text_html else None}...'"
+                )
                 if (old_text_html and html.unescape(old_text_html) == new_text) or (
                     old_text_md and html.unescape(old_text_md) == new_text
                 ):
@@ -332,20 +338,24 @@ async def send_or_edit(
                     markup_same = False
 
             if "photo" in kwargs and interface.photo:
-                media = InputMediaPhoto(kwargs.get("photo"), kwargs.get("caption"), kwargs.get("parse_mode"))
+                media = InputMediaPhoto(kwargs["photo"], kwargs.get("caption"), kwargs.get("parse_mode"))
             elif "document" in kwargs and interface.document:
-                media = InputMediaDocument(kwargs.get("document"), kwargs.get("caption"), kwargs.get("parse_mode"))
+                media = InputMediaDocument(kwargs["document"], kwargs.get("caption"), kwargs.get("parse_mode"))
             elif "video" in kwargs and interface.video:
-                media = InputMediaVideo(kwargs.get("video"), kwargs.get("caption"), kwargs.get("parse_mode"))
+                media = InputMediaVideo(kwargs["video"], kwargs.get("caption"), kwargs.get("parse_mode"))
             elif "animation" in kwargs and interface.animation:
-                media = InputMediaAnimation(kwargs.get("animation"), kwargs.get("caption"), kwargs.get("parse_mode"))
+                media = InputMediaAnimation(kwargs["animation"], kwargs.get("caption"), kwargs.get("parse_mode"))
             else:
                 media = None
 
             if media and interface.media:
                 if media.media == interface.media.media:
                     media_same = True
-                elif media is None and interface.media.media is not None or type(media.media) != type(interface.media.media):
+                elif (
+                    media is None
+                    and interface.media.media is not None
+                    or type(media.media) != type(interface.media.media)
+                ):
                     media_same = False
                 elif isinstance(media.media, str) and isinstance(interface.media.media, str):
                     media_same = interface.media.media == media.media
@@ -374,12 +384,16 @@ async def send_or_edit(
                 media_changed = False
                 if media is not None and not media_same:
                     logger.debug("Media changed, editing media")
-                    interface.message = await interface.edit_media(media=media, **{k: v for k, v in kwargs.items() if k != "chat_id"})
+                    interface.message = await interface.edit_media(
+                        media=media, **{k: v for k, v in kwargs.items() if k != "chat_id"}
+                    )
                     interface.reply_markup = new_reply_markup
                     media_changed = True
                 elif "text" in kwargs and interface.text and not text_same:
                     logger.debug("Text changed, editing text")
-                    interface.message = await interface.message.edit_text(**{k: v for k, v in kwargs.items() if k != "chat_id"})
+                    interface.message = await interface.message.edit_text(
+                        **{k: v for k, v in kwargs.items() if k != "chat_id"}
+                    )
                     interface.reply_markup = new_reply_markup
                     text_changed = True
                 elif "caption" in kwargs and interface.caption and not text_same:
@@ -394,7 +408,9 @@ async def send_or_edit(
                     interface.save(user_data)
                     return interface
 
-                logger.debug(f"Checking message type change: text in kwargs={('text' in kwargs)}, interface.text={interface.text is not None if hasattr(interface, 'text') else 'N/A'}")
+                logger.debug(
+                    f"Checking message type change: text in kwargs={('text' in kwargs)}, interface.text={interface.text is not None if hasattr(interface, 'text') else 'N/A'}"
+                )
                 if (
                     ("text" in kwargs and not interface.text)
                     or ("caption" in kwargs and not interface.caption)
@@ -510,9 +526,10 @@ async def remove_interface_markup(
     await remove_interface(context, interface_name, user_id, application)
 
 
-def get_interface(context: CallbackContext, name: str):
-    if "interfaces" in context.user_data and name in context.user_data["interfaces"]:
+def get_interface(context: CallbackContext, name: str) -> Interface | None:
+    if context.user_data and "interfaces" in context.user_data and name in context.user_data["interfaces"]:
         return context.user_data["interfaces"][name]
+    return None
 
 
 async def delete_user_message(update: Update):

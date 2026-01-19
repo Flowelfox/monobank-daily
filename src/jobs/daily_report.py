@@ -74,6 +74,10 @@ async def send_report_to_user(context, user: User):
     from_ts = int(start_of_day.timestamp())
     to_ts = int(now.timestamp())
 
+    if not user.monobank_token:
+        logger.warning(f"User {user.id} has no monobank token")
+        return
+
     try:
         result = await get_daily_spending(
             user.monobank_token, user.selected_accounts, from_ts, to_ts, user.language_code or "uk"

@@ -2,6 +2,7 @@ import datetime
 import gettext
 import json
 from html import escape
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, DateTime, Integer, String, Text
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -12,6 +13,13 @@ from telegram import User as TelegramUser
 from src.database.models.base import Base
 from src.lib.crypto import decrypt_token, encrypt_token
 from src.settings import PROJECT_ROOT, REPORT_HOUR, REPORT_MINUTE
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import InstrumentedAttribute
+
+
+def _utc_now() -> datetime.datetime:
+    return datetime.datetime.now(datetime.UTC)
 
 
 class User(Base):
@@ -26,7 +34,7 @@ class User(Base):
     _selected_accounts: Mapped[str | None] = mapped_column("selected_accounts", Text, nullable=True)
     report_hour: Mapped[int] = mapped_column(Integer, default=REPORT_HOUR)
     report_minute: Mapped[int] = mapped_column(Integer, default=REPORT_MINUTE)
-    join_date: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
+    join_date: Mapped[datetime.datetime] = mapped_column(DateTime, default=_utc_now)
     block_date: Mapped[datetime.datetime | None] = mapped_column(DateTime, nullable=True)
 
     @property
@@ -57,22 +65,24 @@ class User(Base):
         return not self.block_date
 
     @is_active.expression
-    def is_active(cls):
-        return cls.block_date.is_(None)
+    @classmethod
+    def is_active(cls) -> "InstrumentedAttribute[bool]":
+        return cls.block_date.is_(None)  # type: ignore[return-value]
 
     @hybrid_property
-    def has_token(self):
+    def has_token(self) -> bool:
         return self._monobank_token is not None
 
     @has_token.expression
-    def has_token(cls):
-        return cls._monobank_token.isnot(None)
+    @classmethod
+    def has_token(cls) -> "InstrumentedAttribute[bool]":
+        return cls._monobank_token.isnot(None)  # type: ignore[return-value]
 
-    def activate(self):
+    def activate(self) -> None:
         self.block_date = None
 
-    def deactivate(self):
-        self.block_date = datetime.datetime.utcnow()
+    def deactivate(self) -> None:
+        self.block_date = _utc_now()
 
     @property
     def name(self) -> str:
@@ -92,14 +102,24 @@ class User(Base):
         return f'<a href="{self.mention_url}">{escape(self.name)}</a>'
 
     def to_telegram_user(self, bot: Bot, **kwargs) -> TelegramUser:
-        return TelegramUser(
-            self.id, self.first_name, False, self.last_name, self.username, self.language_code, bot=bot, **kwargs
+        user = TelegramUser(
+            id=self.id,
+            first_name=self.first_name,
+            is_bot=False,
+            last_name=self.last_name,
+            username=self.username,
+            language_code=self.language_code,
+            **kwargs,
         )
+        user.set_bot(bot)
+        return user
 
     @property
     def _translation(self):
         if self.language_code is None:
-            translation = gettext.translation("messages", str(PROJECT_ROOT / "locales"), languages=["en"], fallback=True)
+            translation = gettext.translation(
+                "messages", str(PROJECT_ROOT / "locales"), languages=["en"], fallback=True
+            )
         else:
             translation = gettext.translation(
                 "messages", str(PROJECT_ROOT / "locales"), languages=[str(self.language_code)], fallback=True
