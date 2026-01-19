@@ -1,0 +1,5 @@
+[rules]
+possibly-missing-attribute = "ignore"
+deprecated = "warn"
+possibly-missing-import = "error"
+invalid-method-override = "ignore"
