@@ -56,7 +56,9 @@ class SettingsMenu(BaseMenu):
 
         report_time = f"{user.report_hour:02d}:{user.report_minute:02d}"
 
-        language_name = next((name for code, name in SUPPORTED_LANGUAGES if code == user.language_code), user.language_code)
+        language_name = next(
+            (name for code, name in SUPPORTED_LANGUAGES if code == user.language_code), user.language_code
+        )
 
         text = _(
             "⚙️ <b>Settings</b>\n\n"
@@ -64,7 +66,9 @@ class SettingsMenu(BaseMenu):
             "💳 Accounts: {accounts_status}\n"
             "🕐 Report time: {report_time}\n"
             "🌐 Language: {language}"
-        ).format(token_status=token_status, accounts_status=accounts_status, report_time=report_time, language=language_name)
+        ).format(
+            token_status=token_status, accounts_status=accounts_status, report_time=report_time, language=language_name
+        )
 
         buttons = []
 
@@ -79,7 +83,9 @@ class SettingsMenu(BaseMenu):
         buttons.append([InlineKeyboardButton(_("🌐 Change language"), callback_data="select_language")])
         buttons.append([InlineKeyboardButton(_("◀️ Back"), callback_data="start")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
     async def request_token(self, update, context):
         user = context.user_data["user"]
@@ -97,7 +103,9 @@ class SettingsMenu(BaseMenu):
 
         buttons = [[InlineKeyboardButton(_("❌ Cancel"), callback_data="settings")]]
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         if update.callback_query:
             await update.callback_query.answer()
@@ -113,7 +121,9 @@ class SettingsMenu(BaseMenu):
         await delete_user_message(update)
 
         if not token.startswith("u") or len(token) < 40:
-            text = _("❌ Invalid token format. Please try again.\n\nToken should start with 'u' and be at least 40 characters.")
+            text = _(
+                "❌ Invalid token format. Please try again.\n\nToken should start with 'u' and be at least 40 characters."
+            )
             buttons = [[InlineKeyboardButton(_("❌ Cancel"), callback_data="settings")]]
             await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons))
             return self.States.WAITING_TOKEN
@@ -213,7 +223,9 @@ class SettingsMenu(BaseMenu):
         buttons.append([InlineKeyboardButton(_("💾 Save"), callback_data="save_accounts")])
         buttons.append([InlineKeyboardButton(_("◀️ Cancel"), callback_data="settings")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         return self.States.SELECT_ACCOUNTS
 
@@ -256,7 +268,9 @@ class SettingsMenu(BaseMenu):
         buttons.append([InlineKeyboardButton(_("💾 Save"), callback_data="save_accounts")])
         buttons.append([InlineKeyboardButton(_("◀️ Cancel"), callback_data="settings")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         return self.States.SELECT_ACCOUNTS
 
@@ -291,7 +305,9 @@ class SettingsMenu(BaseMenu):
         buttons = group_buttons(buttons, 6)
         buttons.append([InlineKeyboardButton(_("◀️ Back"), callback_data="settings")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         return self.States.SELECT_HOUR
 
@@ -305,7 +321,9 @@ class SettingsMenu(BaseMenu):
 
         await update.callback_query.answer()
 
-        text = _("🕐 <b>Select report minute</b>\n\nSelected hour: {hour}:XX\n\nChoose minute:").format(hour=f"{hour:02d}")
+        text = _("🕐 <b>Select report minute</b>\n\nSelected hour: {hour}:XX\n\nChoose minute:").format(
+            hour=f"{hour:02d}"
+        )
 
         buttons = []
         minute_options = [0, 15, 30, 45]
@@ -318,7 +336,9 @@ class SettingsMenu(BaseMenu):
         buttons.append([InlineKeyboardButton(_("◀️ Back to hour"), callback_data="set_time")])
         buttons.append([InlineKeyboardButton(_("◀️ Cancel"), callback_data="settings")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         return self.States.SELECT_MINUTE
 
@@ -360,7 +380,9 @@ class SettingsMenu(BaseMenu):
 
         buttons.append([InlineKeyboardButton(_("◀️ Back"), callback_data="settings")])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML"
+        )
 
         return self.States.SELECT_LANGUAGE
 
@@ -369,16 +391,17 @@ class SettingsMenu(BaseMenu):
 
         language_code = update.callback_query.data.replace("set_language_", "")
 
-        with context.session.begin():
-            stmt = select(User).where(User.id == user.id)
-            db_user = context.session.scalar(stmt)
-            db_user.language_code = language_code
-            context.session.add(db_user)
-            context.session.flush()
-            context.session.expunge(db_user)
-            context.user_data["user"] = db_user
+        if user.language_code != language_code:
+            with context.session.begin():
+                stmt = select(User).where(User.id == user.id)
+                db_user = context.session.scalar(stmt)
+                db_user.language_code = language_code
+                context.session.add(db_user)
+                context.session.flush()
+                user = context.session.scalar(stmt)
+                context.user_data["user"] = user
 
-        _ = db_user.translator
+        _ = user.translator
         language_name = next((name for code, name in SUPPORTED_LANGUAGES if code == language_code), language_code)
         await update.callback_query.answer(_("Language set to {language}").format(language=language_name))
 
