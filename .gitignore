@@ -30,6 +30,3 @@ logs/
 
 # Claude Code local files
 .claude/
-
-# Compiled translations
-*.mo
