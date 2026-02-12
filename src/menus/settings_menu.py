@@ -2,11 +2,12 @@ from enum import Enum
 
 from sqlalchemy import select
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import BaseHandler, CallbackQueryHandler, MessageHandler, filters
+from telegram.ext import BaseHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
 
 from src.database.models import User
 from src.lib.basemenu import BaseMenu
 from src.lib.helpers import group_buttons
+from src.lib.menu_filters import FILTER_GET_REPORT, FILTER_HELP, FILTER_SETTINGS
 from src.lib.messages import delete_user_message, send_or_edit
 from src.services.monobank import MonobankAPIError, MonobankService, format_account_name
 
@@ -32,6 +33,8 @@ class SettingsMenu(BaseMenu):
         SELECT_LANGUAGE = 5
 
     async def entry(self, update, context):
+        await delete_user_message(update)
+
         if self.menu_name not in context.user_data:
             context.user_data[self.menu_name] = {}
 
@@ -412,8 +415,20 @@ class SettingsMenu(BaseMenu):
         await self.send_message(context)
         return self.States.DEFAULT
 
+    async def _reenter_settings(self, update, context):
+        """User pressed Settings text button while inside settings."""
+        await delete_user_message(update)
+        await self.send_message(context)
+        return self.States.DEFAULT
+
+    async def _exit_to_parent(self, update, context):
+        """User pressed a main menu text button while in settings. Return to main menu."""
+        await delete_user_message(update)
+        await self.parent.send_message(context)
+        return ConversationHandler.END
+
     def entry_points(self) -> list[BaseHandler]:
-        return [CallbackQueryHandler(self.entry, pattern="^settings$")]
+        return [MessageHandler(FILTER_SETTINGS, self.entry)]
 
     def states(self) -> dict[Enum, list[BaseHandler]]:
         return {
@@ -425,6 +440,8 @@ class SettingsMenu(BaseMenu):
                 CallbackQueryHandler(self.show_language_selection, pattern="^select_language$"),
             ],
             self.States.WAITING_TOKEN: [
+                MessageHandler(FILTER_SETTINGS, self._reenter_settings),
+                MessageHandler(FILTER_GET_REPORT | FILTER_HELP, self._exit_to_parent),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, self.process_token),
                 CallbackQueryHandler(self.entry, pattern="^settings$"),
             ],
@@ -449,4 +466,9 @@ class SettingsMenu(BaseMenu):
         }
 
     def fallbacks(self) -> list[BaseHandler]:
-        return [MessageHandler(filters.ALL, lambda u, _c: delete_user_message(u))]
+        return [
+            MessageHandler(FILTER_SETTINGS, self._reenter_settings),
+            MessageHandler(FILTER_GET_REPORT | FILTER_HELP, self._exit_to_parent),
+            CallbackQueryHandler(self.back, pattern="^start$"),
+            MessageHandler(filters.ALL, lambda u, _c: delete_user_message(u)),
+        ]

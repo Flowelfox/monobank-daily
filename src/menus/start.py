@@ -1,12 +1,14 @@
+import asyncio
 import datetime
 from enum import Enum
 
 import pytz
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import BaseHandler, CallbackQueryHandler, MessageHandler, PrefixHandler, filters
+from telegram import KeyboardButton, ReplyKeyboardMarkup
+from telegram.ext import BaseHandler, MessageHandler, PrefixHandler, filters
 
 from src.lib.basemenu import BaseMenu
 from src.lib.helpers import format_money, prepare_user
+from src.lib.menu_filters import FILTER_GET_REPORT, FILTER_HELP
 from src.lib.messages import delete_interface, delete_user_message, send_or_edit
 from src.menus.settings_menu import SettingsMenu
 from src.services.monobank import MonobankAPIError, get_daily_spending
@@ -41,31 +43,46 @@ class StartMenu(BaseMenu):
             status = _("⚠️ Add Monobank token in settings")
 
         report_time = f"{user.report_hour:02d}:{user.report_minute:02d}"
-        text = _("📊 Monobank Daily Report Bot\n\n{status}\n\nDaily report at {report_time} Kyiv time.").format(status=status, report_time=report_time)
+        text = _("📊 Monobank Daily Report Bot\n\n{status}\n\nDaily report at {report_time} Kyiv time.").format(
+            status=status, report_time=report_time
+        )
 
         buttons = []
 
         if has_token and has_accounts:
-            buttons.append([InlineKeyboardButton(_("📈 Get Report Now"), callback_data="get_report")])
+            buttons.append([KeyboardButton(_("📈 Get Report Now"))])
 
-        buttons.append([InlineKeyboardButton(_("⚙️ Settings"), callback_data="settings")])
-        buttons.append([InlineKeyboardButton(_("❓ Help"), callback_data="help")])
+        buttons.append([KeyboardButton(_("⚙️ Settings")), KeyboardButton(_("❓ Help"))])
 
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
+        await send_or_edit(
+            context,
+            chat_id=user.id,
+            text=text,
+            reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True),
+            parse_mode="HTML",
+        )
 
     async def get_report(self, update, context):
+        await delete_user_message(update)
         user = context.user_data["user"]
         _ = user.translator
 
         if not user.monobank_token:
-            await update.callback_query.answer(_("Please add Monobank token first"), show_alert=True)
+            await context.bot.send_message(user.id, _("Please add Monobank token first"))
             return self.States.DEFAULT
 
         if not user.selected_accounts:
-            await update.callback_query.answer(_("Please select accounts first"), show_alert=True)
+            await context.bot.send_message(user.id, _("Please select accounts first"))
             return self.States.DEFAULT
 
-        await update.callback_query.answer(_("Loading..."))
+        loading_msg = await context.bot.send_message(chat_id=user.id, text=_("⏳ Querying API..."))
+
+        asyncio.create_task(self._fetch_and_send_report(context.bot, user, loading_msg.message_id))
+
+        return self.States.DEFAULT
+
+    async def _fetch_and_send_report(self, bot, user, loading_message_id):
+        _ = user.translator
 
         tz = pytz.timezone(TIMEZONE)
         now = datetime.datetime.now(tz)
@@ -75,8 +92,11 @@ class StartMenu(BaseMenu):
         to_ts = int(now.timestamp())
 
         try:
-            result = await get_daily_spending(
-                user.monobank_token, user.selected_accounts, from_ts, to_ts, user.language_code or "uk"
+            result = await asyncio.wait_for(
+                get_daily_spending(
+                    user.monobank_token, user.selected_accounts, from_ts, to_ts, user.language_code or "uk"
+                ),
+                timeout=30,
             )
 
             date_str = now.strftime("%d.%m.%Y")
@@ -95,15 +115,23 @@ class StartMenu(BaseMenu):
             if result["total_income"] > 0:
                 text += _("\n\n📥 Income: +{amount} ₴").format(amount=format_money(result["total_income"]))
 
-            await context.bot.send_message(chat_id=user.id, text=text, parse_mode="HTML")
+            await bot.delete_message(chat_id=user.id, message_id=loading_message_id)
+            await bot.send_message(chat_id=user.id, text=text, parse_mode="HTML")
+
+        except TimeoutError:
+            await bot.delete_message(chat_id=user.id, message_id=loading_message_id)
+            await bot.send_message(chat_id=user.id, text=_("❌ Request timed out. Please try again later."))
 
         except MonobankAPIError as e:
-            error_text = _("❌ Error: {error}").format(error=e.message)
-            await context.bot.send_message(chat_id=user.id, text=error_text, parse_mode="HTML")
+            await bot.delete_message(chat_id=user.id, message_id=loading_message_id)
+            await bot.send_message(chat_id=user.id, text=_("❌ Error: {error}").format(error=e.message))
 
-        return self.States.DEFAULT
+        except Exception:
+            await bot.delete_message(chat_id=user.id, message_id=loading_message_id)
+            await bot.send_message(chat_id=user.id, text=_("❌ Something went wrong. Please try again later."))
 
     async def show_help(self, update, context):
+        await delete_user_message(update)
         user = context.user_data["user"]
         _ = user.translator
 
@@ -119,24 +147,19 @@ class StartMenu(BaseMenu):
             "You can also get report manually anytime!"
         )
 
-        buttons = [[InlineKeyboardButton(_("◀️ Back"), callback_data="start")]]
-
-        await send_or_edit(context, chat_id=user.id, text=text, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="HTML")
-
-        if update.callback_query:
-            await update.callback_query.answer()
+        await context.bot.send_message(chat_id=user.id, text=text, parse_mode="HTML")
 
         return self.States.DEFAULT
 
     def entry_points(self) -> list[BaseHandler]:
-        return [PrefixHandler("/", "start", self.entry), CallbackQueryHandler(self.entry, pattern="^start$")]
+        return [PrefixHandler("/", "start", self.entry)]
 
     def states(self) -> dict[Enum, list[BaseHandler]]:
         return {
             self.States.DEFAULT: [
                 SettingsMenu(self).handler,
-                CallbackQueryHandler(self.get_report, pattern="^get_report$"),
-                CallbackQueryHandler(self.show_help, pattern="^help$"),
+                MessageHandler(FILTER_GET_REPORT, self.get_report),
+                MessageHandler(FILTER_HELP, self.show_help),
             ],
         }
 
