@@ -214,6 +214,35 @@ async def get_daily_spending(token: str, accounts: list[str], from_ts: int, to_t
     }
 
 
+async def get_account_balances(token: str, account_ids: list[str]) -> list[dict]:
+    service = MonobankService(token)
+    try:
+        accounts = await service.get_accounts()
+    except MonobankAPIError:
+        return []
+
+    balances = []
+    for account in accounts:
+        if account.get("id") in account_ids:
+            balance = account.get("balance", 0)
+            credit_limit = account.get("creditLimit", 0)
+            currency_code = account.get("currencyCode", 980)
+
+            currency_symbols = {980: "₴", 840: "$", 978: "€"}
+            currency = currency_symbols.get(currency_code, str(currency_code))
+
+            balances.append(
+                {
+                    "name": format_account_name(account),
+                    "balance": balance,
+                    "credit_limit": credit_limit,
+                    "currency": currency,
+                }
+            )
+
+    return balances
+
+
 def format_account_name(account: dict) -> str:
     account_type = account.get("type", "")
     currency_code = account.get("currencyCode", 980)
@@ -236,9 +265,9 @@ def format_account_name(account: dict) -> str:
     elif account_type == "white":
         name = "💳 Біла картка"
     elif account_type == "platinum":
-        name = "💎 Platinum"
+        name = "💳 Platinum"
     elif account_type == "iron":
-        name = "🔩 Залізна картка"
+        name = "💳 Залізна картка"
     elif account_type == "fop":
         name = "💼 ФОП"
     elif account_type == "eAid":

@@ -85,14 +85,26 @@ msgstr "✅ {count} account(s) selected"
 msgid "❌ No accounts selected"
 msgstr "❌ No accounts selected"
 
-msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
-msgstr "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
+msgid "✅ Enabled"
+msgstr "✅ Enabled"
+
+msgid "❌ Disabled"
+msgstr "❌ Disabled"
+
+msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n💰 Show balance: {balance_status}\n🌐 Language: {language}"
+msgstr "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n💰 Show balance: {balance_status}\n🌐 Language: {language}"
 
 msgid "🔄 Change token"
 msgstr "🔄 Change token"
 
 msgid "💳 Select accounts"
 msgstr "💳 Select accounts"
+
+msgid "💰 Show balance in report"
+msgstr "💰 Show balance in report"
+
+msgid "💰 Hide balance in report"
+msgstr "💰 Hide balance in report"
 
 msgid "🗑 Remove token"
 msgstr "🗑 Remove token"
@@ -189,3 +201,15 @@ msgstr "\n📥 Income: +{amount} ₴"
 
 msgid "\n\n📱 Transactions: {count}"
 msgstr "\n\n📱 Transactions: {count}"
+
+msgid "Balance will be shown in reports"
+msgstr "Balance will be shown in reports"
+
+msgid "Balance hidden from reports"
+msgstr "Balance hidden from reports"
+
+msgid "\n\n💳 Balance: {amount} {currency}"
+msgstr "\n\n💳 Balance: {amount} {currency}"
+
+msgid "\n\n💳 Balance:"
+msgstr "\n\n💳 Balance:"

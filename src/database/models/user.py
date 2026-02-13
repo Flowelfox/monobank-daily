@@ -4,7 +4,7 @@ import json
 from html import escape
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, DateTime, Integer, String, Text
+from sqlalchemy import BigInteger, Boolean, DateTime, Integer, String, Text
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column
 from telegram import Bot
@@ -34,6 +34,7 @@ class User(Base):
     _selected_accounts: Mapped[str | None] = mapped_column("selected_accounts", Text, nullable=True)
     report_hour: Mapped[int] = mapped_column(Integer, default=REPORT_HOUR)
     report_minute: Mapped[int] = mapped_column(Integer, default=REPORT_MINUTE)
+    show_balance: Mapped[bool] = mapped_column(Boolean, default=False)
     join_date: Mapped[datetime.datetime] = mapped_column(DateTime, default=_utc_now)
     block_date: Mapped[datetime.datetime | None] = mapped_column(DateTime, nullable=True)
 

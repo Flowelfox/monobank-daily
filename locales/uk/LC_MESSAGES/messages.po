@@ -85,14 +85,26 @@ msgstr "✅ Обрано {count} рахунок(ів)"
 msgid "❌ No accounts selected"
 msgstr "❌ Рахунки не обрано"
 
-msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n🌐 Language: {language}"
-msgstr "⚙️ <b>Налаштування</b>\n\n🔑 Токен: {token_status}\n💳 Рахунки: {accounts_status}\n🕐 Час звіту: {report_time}\n🌐 Мова: {language}"
+msgid "✅ Enabled"
+msgstr "✅ Увімкнено"
+
+msgid "❌ Disabled"
+msgstr "❌ Вимкнено"
+
+msgid "⚙️ <b>Settings</b>\n\n🔑 Token: {token_status}\n💳 Accounts: {accounts_status}\n🕐 Report time: {report_time}\n💰 Show balance: {balance_status}\n🌐 Language: {language}"
+msgstr "⚙️ <b>Налаштування</b>\n\n🔑 Токен: {token_status}\n💳 Рахунки: {accounts_status}\n🕐 Час звіту: {report_time}\n💰 Показувати баланс: {balance_status}\n🌐 Мова: {language}"
 
 msgid "🔄 Change token"
 msgstr "🔄 Змінити токен"
 
 msgid "💳 Select accounts"
 msgstr "💳 Обрати рахунки"
+
+msgid "💰 Show balance in report"
+msgstr "💰 Показувати баланс у звіті"
+
+msgid "💰 Hide balance in report"
+msgstr "💰 Сховати баланс у звіті"
 
 msgid "🗑 Remove token"
 msgstr "🗑 Видалити токен"
@@ -189,3 +201,15 @@ msgstr "\n📥 Надходження: +{amount} ₴"
 
 msgid "\n\n📱 Transactions: {count}"
 msgstr "\n\n📱 Транзакцій: {count}"
+
+msgid "Balance will be shown in reports"
+msgstr "Баланс буде показано у звітах"
+
+msgid "Balance hidden from reports"
+msgstr "Баланс приховано зі звітів"
+
+msgid "\n\n💳 Balance: {amount} {currency}"
+msgstr "\n\n💳 Баланс: {amount} {currency}"
+
+msgid "\n\n💳 Balance:"
+msgstr "\n\n💳 Баланс:"

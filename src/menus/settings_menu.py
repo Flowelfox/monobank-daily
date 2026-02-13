@@ -59,6 +59,8 @@ class SettingsMenu(BaseMenu):
 
         report_time = f"{user.report_hour:02d}:{user.report_minute:02d}"
 
+        balance_status = _("✅ Enabled") if user.show_balance else _("❌ Disabled")
+
         language_name = next(
             (name for code, name in SUPPORTED_LANGUAGES if code == user.language_code), user.language_code
         )
@@ -68,9 +70,14 @@ class SettingsMenu(BaseMenu):
             "🔑 Token: {token_status}\n"
             "💳 Accounts: {accounts_status}\n"
             "🕐 Report time: {report_time}\n"
+            "💰 Show balance: {balance_status}\n"
             "🌐 Language: {language}"
         ).format(
-            token_status=token_status, accounts_status=accounts_status, report_time=report_time, language=language_name
+            token_status=token_status,
+            accounts_status=accounts_status,
+            report_time=report_time,
+            balance_status=balance_status,
+            language=language_name,
         )
 
         buttons = []
@@ -79,6 +86,8 @@ class SettingsMenu(BaseMenu):
             buttons.append([InlineKeyboardButton(_("🔄 Change token"), callback_data="set_token")])
             buttons.append([InlineKeyboardButton(_("💳 Select accounts"), callback_data="select_accounts")])
             buttons.append([InlineKeyboardButton(_("🕐 Change report time"), callback_data="set_time")])
+            balance_label = _("💰 Hide balance in report") if user.show_balance else _("💰 Show balance in report")
+            buttons.append([InlineKeyboardButton(balance_label, callback_data="toggle_balance")])
             buttons.append([InlineKeyboardButton(_("🗑 Remove token"), callback_data="remove_token")])
         else:
             buttons.append([InlineKeyboardButton(_("➕ Add token"), callback_data="set_token")])
@@ -367,6 +376,29 @@ class SettingsMenu(BaseMenu):
         await self.send_message(context)
         return self.States.DEFAULT
 
+    async def toggle_balance(self, update, context):
+        user = context.user_data["user"]
+        _ = user.translator
+
+        new_value = not user.show_balance
+
+        with context.session.begin():
+            stmt = select(User).where(User.id == user.id)
+            db_user = context.session.scalar(stmt)
+            db_user.show_balance = new_value
+            context.session.add(db_user)
+            context.session.flush()
+            context.session.expunge(db_user)
+            context.user_data["user"] = db_user
+
+        if new_value:
+            await update.callback_query.answer(_("Balance will be shown in reports"))
+        else:
+            await update.callback_query.answer(_("Balance hidden from reports"))
+
+        await self.send_message(context)
+        return self.States.DEFAULT
+
     async def show_language_selection(self, update, context):
         user = context.user_data["user"]
         _ = user.translator
@@ -437,6 +469,7 @@ class SettingsMenu(BaseMenu):
                 CallbackQueryHandler(self.remove_token, pattern="^remove_token$"),
                 CallbackQueryHandler(self.show_accounts, pattern="^select_accounts$"),
                 CallbackQueryHandler(self.show_hour_selection, pattern="^set_time$"),
+                CallbackQueryHandler(self.toggle_balance, pattern="^toggle_balance$"),
                 CallbackQueryHandler(self.show_language_selection, pattern="^select_language$"),
             ],
             self.States.WAITING_TOKEN: [

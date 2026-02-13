@@ -8,7 +8,7 @@ from telegram.error import BadRequest, Forbidden
 from src.database.configuration import get_session
 from src.database.models import User
 from src.lib.helpers import format_money
-from src.services.monobank import MonobankAPIError, get_daily_spending
+from src.services.monobank import MonobankAPIError, get_account_balances, get_daily_spending
 from src.settings import TIMEZONE
 
 logger = logging.getLogger(__name__)
@@ -104,6 +104,22 @@ async def send_report_to_user(context, user: User):
         text += _("\n📥 Income: +{amount} ₴").format(amount=format_money(result["total_income"]))
 
     text += _("\n\n📱 Transactions: {count}").format(count=result["transaction_count"])
+
+    if user.show_balance:
+        try:
+            balances = await get_account_balances(user.monobank_token, user.selected_accounts)
+            if balances:
+                if len(balances) == 1:
+                    acc = balances[0]
+                    text += _("\n\n💳 Balance: {amount} {currency}").format(
+                        amount=format_money(acc["balance"]), currency=acc["currency"]
+                    )
+                else:
+                    text += _("\n\n💳 Balance:")
+                    for acc in balances:
+                        text += f"\n{acc['name']}: {format_money(acc['balance'])} {acc['currency']}"
+        except MonobankAPIError:
+            pass
 
     try:
         await context.bot.send_message(chat_id=user.id, text=text, parse_mode="HTML")
