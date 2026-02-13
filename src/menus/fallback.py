@@ -23,7 +23,14 @@ async def goto_start(update: Update, context: CustomCallbackContext):
     if update.callback_query:
         await update.callback_query.answer()
 
-    from src.menus.start import StartMenu
+    start_menu = context.bot_data.get("start_menu")
+    if start_menu is None:
+        from src.menus.start import StartMenu
 
-    start_menu = StartMenu(application=context.application)
-    return await start_menu.entry(update, context)
+        start_menu = StartMenu(application=context.application)
+
+    handler = start_menu.handler
+    key = handler._get_key(update)
+    handler._conversations[key] = start_menu.States.DEFAULT
+
+    await start_menu.send_message(context)

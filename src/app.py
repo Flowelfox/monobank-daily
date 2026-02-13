@@ -34,6 +34,7 @@ def main():
     application = ApplicationBuilder().token(BOT_TOKEN).context_types(context_types).build()
 
     start_menu = StartMenu(application=application)
+    application.bot_data["start_menu"] = start_menu
 
     application.add_handler(start_menu.handler)
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE, goto_start))
